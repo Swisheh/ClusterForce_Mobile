@@ -334,9 +334,10 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         if (col.tag == "Bullets" && col.name != bullet.name)
         {
             health = health - pointScript.damagePerHit;
+            ammo = ammo + pointScript.ammoPerHit;
+            //photonView.RPC("GettingHit", RpcTarget.All);
             HealthBar();
             Destroy(Instantiate(blood, col.transform.position, col.transform.rotation, this.transform), 1);
-            ammo = ammo + pointScript.ammoPerHit;
             Bullets();
             //col.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.LocalPlayer);
             Destroy(col.gameObject);
@@ -381,11 +382,6 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     {
         Image healthBar = transform.Find("Canvas/Health Bar").GetComponent<Image>();
         healthBar.fillAmount = (float)health / 100;
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-
     }
 
     public void SetPlayerControls()
@@ -435,5 +431,29 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     public void RPCResetAnim(Animator animator, string animation)
     {
         animator.ResetTrigger(animation);
+    }
+
+    [PunRPC]
+    public void GettingHit()
+    {
+        
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(health);
+            stream.SendNext(ammo);
+
+            Debug.Log("Sending");
+        }
+        else
+        {
+            health = (int)stream.ReceiveNext();
+            ammo = (int)stream.ReceiveNext();
+
+            Debug.Log("Receive");
+        }
     }
 }
