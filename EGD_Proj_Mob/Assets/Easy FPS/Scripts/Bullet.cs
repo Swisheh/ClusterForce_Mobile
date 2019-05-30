@@ -63,26 +63,28 @@ public class Bullet : MonoBehaviour
     {
         if (other.tag != "Player" && other.tag != "Bullets")
         {
-            Destroy(gameObject);
-            int points = Mathf.RoundToInt((float)pointsTravelled * ((float)multiplier * (float)multiplier));
             //Debug.Log(pointsTravelled * multiplier + " " + whoShot);
-            //photonView.RPC("DestroyObject", RpcTarget.All, gameObject);
-            pointScript.GivePoints(points, whoShot);
-            //Debug.Log(whoShot);
-            //Debug.Log(other);    
-            GameObject pointsDisplay = Instantiate(pointDisplay, this.transform.position, this.transform.rotation);
-            Text text = pointsDisplay.transform.Find("PointDisplayCanvas/Text").GetComponent<Text>();
-            text.text = "+" + points;
-            text.fontSize = 2 * (int)multiplier;
-            text.color = this.GetComponent<MeshRenderer>().material.color;
-            Destroy(pointsDisplay.gameObject, 1f);
+            PhotonView photonView = PhotonView.Get(this);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("Points", RpcTarget.All, multiplier);
+            }            
         }
     }
 
     [PunRPC]
-    public void DestroyObject(GameObject item)
-    {
-        Debug.Log("here");
-        Destroy(item);
+    public void Points(double multi)
+    {        
+        int points = Mathf.RoundToInt((float)pointsTravelled * ((float)multi * (float)multi));
+        pointScript.GivePoints(points, whoShot);
+        //Debug.Log(whoShot);
+        //Debug.Log(other);    
+        GameObject pointsDisplay = Instantiate(pointDisplay, this.transform.position, this.transform.rotation);
+        Text text = pointsDisplay.transform.Find("PointDisplayCanvas/Text").GetComponent<Text>();
+        text.text = "+" + points;
+        text.fontSize = 2 * (int)multi;
+        text.color = this.GetComponent<MeshRenderer>().material.color;
+        Destroy(pointsDisplay.gameObject, 1f);
+        Destroy(gameObject);
     }
 }

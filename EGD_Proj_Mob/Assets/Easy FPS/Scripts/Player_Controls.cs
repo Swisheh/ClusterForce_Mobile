@@ -253,9 +253,9 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
             anim.ResetTrigger("right");
             anim.ResetTrigger("left");
             anim.ResetTrigger("forward");
-            RPCResetAnim(anim, "right");
-            RPCResetAnim(anim, "right");
-            RPCResetAnim(anim, "right");
+            //RPCResetAnim(anim, "right");
+            //RPCResetAnim(anim, "right");
+            //RPCResetAnim(anim, "right");
         }
     }
 
@@ -281,8 +281,8 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         if (shoot >= 0.5f && ammo > 0 && canShoot && health > 0)
         {
             StartCoroutine(Shoot(currentShootSpeed));
-            //gunBarrel.SetTrigger("shoot");
-            RPCAnimate(gunBarrel, "shoot");
+            gunBarrel.SetTrigger("shoot");
+            //RPCAnimate(gunBarrel, "shoot");
             gunBarrel.speed = currentShootSpeed + 1;
             currentShootSpeed += maxShootSpeed;
             ammo = ammo - 1;
@@ -293,7 +293,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         else if (shoot == 0)
         {
             currentShootSpeed = 0f;
-            //gunBarrel.ResetTrigger("shoot");
+            gunBarrel.ResetTrigger("shoot");
             //photonView.RPC("RPCResetAnim", RpcTarget.All, gunBarrel, "shoot");
             gunBarrel.speed = 1;
             if(fired == true)
@@ -445,15 +445,13 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(health);
             stream.SendNext(ammo);
-
-            Debug.Log("Sending");
+            //Debug.Log("Sending");
         }
         else
         {
             health = (int)stream.ReceiveNext();
             ammo = (int)stream.ReceiveNext();
-
-            Debug.Log("Receive");
+            //Debug.Log("Receive");
         }
     }
 }
