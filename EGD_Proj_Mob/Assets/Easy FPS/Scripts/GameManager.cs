@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("master client");
+            //Debug.Log("master client");
         }
     }
 
@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("master client left");
+            //Debug.Log("master client left");
         }
     }
 }

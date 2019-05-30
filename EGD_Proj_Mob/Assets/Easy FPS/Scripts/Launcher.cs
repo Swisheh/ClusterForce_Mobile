@@ -36,11 +36,18 @@ namespace Com.collective.timclanceys
         void Awake()
         {
             PhotonNetwork.AutomaticallySyncScene = true;    
+            
         }
         // Start is called before the first frame update
         void Start()
         {
             progressLabel.gameObject.SetActive(false);
+            if (PhotonNetwork.InRoom)
+            {
+                progressLabel.gameObject.SetActive(true);
+                progressLabel.text = "Connected";
+                room.text = "Room: " + PhotonNetwork.CurrentRoom.Name;
+            }
         }
 
         #endregion
@@ -73,7 +80,6 @@ namespace Com.collective.timclanceys
             {
                 PhotonNetwork.JoinRoom("XYZ");
             }
-            
         }
 
         public override void OnDisconnected(DisconnectCause cause)

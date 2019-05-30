@@ -68,6 +68,12 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     Animator gunBarrel;
     Rigidbody playerRigidbody;
 
+    public bool forwardA = false;       // Animation bools
+    public bool leftA = false;
+    public bool rightA = false;
+    public bool fireA = false;
+    public bool deadA = false;
+
     private float turnSpeed = 100;
     private float currentSpeed;
     private float accelerationSpeed = 50000f;
@@ -178,7 +184,8 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
 
                 // Shooting
                 Shooting();
-            
+
+            Animating();
             // Move the player around the scene.
             
         }
@@ -235,27 +242,37 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
             deaccelerationSpeed = 0.1f;
         }
 
-        if(verticalMove != 0)
+        if (verticalMove != 0)
         {
-            anim.SetTrigger("forward");
+            //anim.SetBool("forward", true);
             //Debug.Log("Moving");
+            forwardA = true;
         }
-        else if(horizontalMove > 0)
+        else if (horizontalMove > 0)
         {
-            anim.SetTrigger("right");
+            //anim.SetTrigger("right");
+            rightA = true;
         }
         else if (horizontalMove < 0)
         {
-            anim.SetTrigger("left");
+            //anim.SetTrigger("left");
+            leftA = true;
         }
-        else
+        else if (playerRigidbody.velocity == new Vector3(0, 0, 0))
         {
-            anim.ResetTrigger("right");
-            anim.ResetTrigger("left");
-            anim.ResetTrigger("forward");
-            //RPCResetAnim(anim, "right");
-            //RPCResetAnim(anim, "right");
-            //RPCResetAnim(anim, "right");
+            //if (photonView.IsMine)
+            //{
+            //    Debug.Log(photonView.ViewID + " " + playerRigidbody.velocity);
+            //}
+            //anim.ResetTrigger("right");
+            //anim.ResetTrigger("left");
+            //anim.SetBool("forward", false);
+            //photonView.RPC("RPCResetAnim", RpcTarget.All, "right");
+            //RPCResetAnim("left");
+            //RPCResetAnim("forward");
+            forwardA = false;
+            rightA = false;
+            leftA = false;
         }
     }
 
@@ -326,6 +343,29 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         if (currentBullet == gunFlash.Length)
         {
             currentBullet = 0;
+        }
+    }
+
+    public void Animating()
+    {
+        if(forwardA)
+        {
+            anim.SetBool("forward", true);
+        } 
+        else if (leftA)
+        {
+            anim.SetBool("left", true);
+        }
+        else if (rightA)
+        {
+            anim.SetBool("right", true);
+        }
+        else
+        {
+            
+            anim.SetBool("forward", false);
+            anim.SetBool("left", false);
+            anim.SetBool("right", false);
         }
     }
 
@@ -422,15 +462,15 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    public void RPCAnimate(Animator animator, string animation)
+    public void RPCAnimate(string animation)
     {
-        animator.SetTrigger(animation);
+        anim.SetTrigger(animation);
     }
 
     [PunRPC]
-    public void RPCResetAnim(Animator animator, string animation)
+    public void RPCResetAnim(string animation)
     {
-        animator.ResetTrigger(animation);
+        anim.ResetTrigger(animation);
     }
 
     [PunRPC]
@@ -445,12 +485,18 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(health);
             stream.SendNext(ammo);
+            stream.SendNext(forwardA);
+            stream.SendNext(leftA);
+            stream.SendNext(rightA);
             //Debug.Log("Sending");
         }
         else
         {
             health = (int)stream.ReceiveNext();
             ammo = (int)stream.ReceiveNext();
+            forwardA = (bool)stream.ReceiveNext();
+            leftA = (bool)stream.ReceiveNext();
+            rightA = (bool)stream.ReceiveNext();
             //Debug.Log("Receive");
         }
     }
