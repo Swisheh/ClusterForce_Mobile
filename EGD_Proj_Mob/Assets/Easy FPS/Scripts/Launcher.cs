@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using System.IO;
+using System;
 
 
 namespace Com.collective.timclanceys
@@ -19,8 +21,12 @@ namespace Com.collective.timclanceys
         [Tooltip("Room #")]
         [SerializeField]
         private Text room;
+        [Tooltip("Room Field")]
+        [SerializeField]
+        private InputField roomField;
 
         private bool isConnecting;
+        private bool isRandom;
         #region Private Serializable Fields
 
         #endregion
@@ -61,13 +67,64 @@ namespace Com.collective.timclanceys
 
             if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.JoinRoom("XYZ");
+                if (roomField.text != null)
+                {
+                    if(OnlyLetters(roomField.text))
+                    {
+                        PhotonNetwork.JoinRoom(roomField.text);
+                    }
+                }
+                else
+                {
+                    PhotonNetwork.JoinRoom("XYZ");
+                }
             }
             else
             {
                 PhotonNetwork.GameVersion = gameVersion;
                 PhotonNetwork.ConnectUsingSettings();
             }
+        }
+
+        public void Random()
+        {
+            isRandom = true;
+            progressLabel.gameObject.SetActive(true);
+
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.JoinRandomRoom();
+            }
+            else
+            {
+                PhotonNetwork.GameVersion = gameVersion;
+                PhotonNetwork.ConnectUsingSettings();
+            }
+        }
+
+        public string RandomLetters()
+        {
+            string letters = "";
+            System.Random rand = new System.Random();
+            for (int i = 0; i < 3; i++)
+            {
+                char letter = (char)('A' + rand.Next(0, 26));
+                letters = letters + letter;
+            }
+            //Debug.Log(letters);
+            return letters;
+        }
+
+        public bool OnlyLetters(string letters)
+        {
+            foreach (char letter in letters)
+            {
+                if(!char.IsLetter(letter))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         #endregion
@@ -78,8 +135,23 @@ namespace Com.collective.timclanceys
         {
             if (isConnecting)
             {
-                PhotonNetwork.JoinRoom("XYZ");
+                if (roomField.text != null)
+                {
+                    if (OnlyLetters(roomField.text))
+                    {
+                        PhotonNetwork.JoinRoom(roomField.text);
+                    }
+                }
+                else
+                {
+                    PhotonNetwork.JoinRoom("XYZ");
+                }
             }
+            else if (isRandom)
+            {
+                PhotonNetwork.JoinRandomRoom();
+            }
+           
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -91,17 +163,25 @@ namespace Com.collective.timclanceys
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             Debug.Log("new room created");
-            Debug.Log(message);
-
-            PhotonNetwork.CreateRoom("XYZ", new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+            //Debug.Log(message);
+            PhotonNetwork.CreateRoom(RandomLetters(), new RoomOptions { MaxPlayers = maxPlayersPerRoom });
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
-            Debug.Log("new XYZ created");
+            //Debug.Log("new XYZ created");
             //Debug.Log(message);
-
-            PhotonNetwork.CreateRoom("XYZ", new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+            if (roomField.text != null)
+            {
+                if (OnlyLetters(roomField.text))
+                {
+                    PhotonNetwork.CreateRoom(roomField.text, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+                }
+            }
+            else
+            {
+                PhotonNetwork.CreateRoom("XYZ", new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+            }
         }
 
         public override void OnJoinedRoom()
