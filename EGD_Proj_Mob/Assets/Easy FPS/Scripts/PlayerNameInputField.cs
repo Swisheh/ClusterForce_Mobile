@@ -40,8 +40,8 @@ namespace Com.collective.timclanceys
         {
             if (string.IsNullOrEmpty(value))
             {
-                Debug.LogError("Player name is null or empty");
-                return;
+                //Debug.LogError("Player name is null or empty");
+                //return;
             }
             PhotonNetwork.NickName = value;
 

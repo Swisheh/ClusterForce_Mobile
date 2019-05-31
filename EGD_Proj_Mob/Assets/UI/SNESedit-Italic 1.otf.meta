@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 2bf55a8fcc1c6d740874a146f59c232c
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: SNES edit
+  fontNames:
+  - SNES edit
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: bd4d8e34c373c524187476d9c998f95a, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

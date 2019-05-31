@@ -50,23 +50,5 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
 
-    public override void OnPlayerEnteredRoom(Player other)
-    {
-        Debug.Log("player connected");
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            //Debug.Log("master client");
-        }
-    }
-
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        Debug.Log("player left");
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            //Debug.Log("master client left");
-        }
-    }
+    
 }

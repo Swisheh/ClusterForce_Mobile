@@ -24,6 +24,18 @@ namespace Com.collective.timclanceys
         [Tooltip("Room Field")]
         [SerializeField]
         private InputField roomField;
+        [Tooltip("Player 1 Field")]
+        [SerializeField]
+        private Text player1Field;
+        [Tooltip("Player 2 Field")]
+        [SerializeField]
+        private Text player2Field;
+        [Tooltip("Player 3 Field")]
+        [SerializeField]
+        private Text player3Field;
+        [Tooltip("Player 4 Field")]
+        [SerializeField]
+        private Text player4Field;
 
         private bool isConnecting;
         private bool isRandom;
@@ -162,7 +174,7 @@ namespace Com.collective.timclanceys
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
-            Debug.Log("new room created");
+            //Debug.Log("new room created");
             //Debug.Log(message);
             PhotonNetwork.CreateRoom(RandomLetters(), new RoomOptions { MaxPlayers = maxPlayersPerRoom });
         }
@@ -186,19 +198,74 @@ namespace Com.collective.timclanceys
 
         public override void OnJoinedRoom()
         {
-            Debug.Log("entered room");
-            progressLabel.text = "Connected";
-            room.text = "Room: " + PhotonNetwork.CurrentRoom.Name;
-
-            foreach (Player player in PhotonNetwork.PlayerList)
+            if (PhotonNetwork.IsConnected)
             {
-                Debug.Log(player.ActorNumber);
+                //Debug.Log("entered room");
+                progressLabel.text = "Connected";
+                room.text = "Room: " + PhotonNetwork.CurrentRoom.Name;
+
+                Player[] players = PhotonNetwork.PlayerList;
+                for (int i = 0; i < players.Length; i++)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            SetName(player1Field, players[i], i + 1);
+                            break;
+                        case 1:
+                            SetName(player2Field, players[i], i + 1);
+                            break;
+                        case 2:
+                            SetName(player3Field, players[i], i + 1);
+                            break;
+                        case 3:
+                            SetName(player4Field, players[i], i + 1);
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+                player1Field.text = "(HOST) " + player1Field.text;
             }
+        }
+
+        public void SetName(Text field, Player player, int i)
+        {
+            if (!string.IsNullOrEmpty(player.NickName))
+            {
+                field.text = player.NickName;
+            }
+            else
+            {
+                field.text = "Player " + i;
+            }
+        }
+
+        public override void OnPlayerEnteredRoom(Player other)
+        {
+            //Debug.Log("player connected");
+            OnJoinedRoom();
+
             if (PhotonNetwork.IsMasterClient)
             {
-                Debug.Log("is master");
+                //Debug.Log("master client");
             }
-            
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            //Debug.Log("player left");
+            player1Field.text = "";
+            player2Field.text = "";
+            player3Field.text = "";
+            player4Field.text = "";
+            OnJoinedRoom();
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                //Debug.Log("master client left");
+            }
         }
 
         #endregion

@@ -429,7 +429,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
         Player[] playerList = PhotonNetwork.PlayerList;
         for (int i = 0; i < playerList.Length; i++) 
         {
-            if (playerList[i].ActorNumber == photonView.ViewID)
+            if (i+1 == photonView.ViewID)
             {
                 //Debug.Log(photonView.ViewID);
                 //photonView.TransferOwnership(playerList[i]);
@@ -454,7 +454,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
             }
             else if (playerList[i].ActorNumber != photonView.ViewID && playerList[i].IsLocal)
             {
-                Debug.Log(playerList[i].ActorNumber + " " + photonView.ViewID);
+                //Debug.Log(playerList[i].ActorNumber + " " + photonView.ViewID);
                 transform.Find("Main Camera").GetComponent<Camera>().gameObject.SetActive(false);
                 //transform.Find("Main Camera/Camera").GetComponent<Camera>().gameObject.SetActive(false);
             }
