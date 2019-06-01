@@ -299,6 +299,6 @@ public class Points : MonoBehaviourPunCallbacks
                 }
                 break;
         }
-        return "No name found";
+        return name;
     }
 }
