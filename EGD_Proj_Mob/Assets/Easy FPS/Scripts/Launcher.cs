@@ -36,6 +36,18 @@ namespace Com.collective.timclanceys
         [Tooltip("Player 4 Field")]
         [SerializeField]
         private Text player4Field;
+        [Tooltip("Random Button")]
+        [SerializeField]
+        private Button randomButton;
+        [Tooltip("Connect Button")]
+        [SerializeField]
+        private Button connectButton;
+        [Tooltip("Leave Button")]
+        [SerializeField]
+        private Button leaveButton;
+        [Tooltip("Ready Button")]
+        [SerializeField]
+        private Button readyButton;
 
         private bool isConnecting;
         private bool isRandom;
@@ -53,18 +65,20 @@ namespace Com.collective.timclanceys
 
         void Awake()
         {
-            PhotonNetwork.AutomaticallySyncScene = true;    
-            
+            PhotonNetwork.AutomaticallySyncScene = true;  
         }
         // Start is called before the first frame update
         void Start()
         {
             progressLabel.gameObject.SetActive(false);
+            leaveButton.interactable = false;
+            readyButton.interactable = false;
             if (PhotonNetwork.InRoom)
             {
                 progressLabel.gameObject.SetActive(true);
                 progressLabel.text = "Connected";
                 room.text = "Room: " + PhotonNetwork.CurrentRoom.Name;
+                OnJoinedRoom();
             }
         }
 
@@ -79,7 +93,7 @@ namespace Com.collective.timclanceys
 
             if (PhotonNetwork.IsConnected)
             {
-                if (roomField.text != null)
+                if (!string.IsNullOrEmpty(roomField.text))
                 {
                     if(OnlyLetters(roomField.text))
                     {
@@ -90,6 +104,7 @@ namespace Com.collective.timclanceys
                 {
                     PhotonNetwork.JoinRoom("XYZ");
                 }
+                leaveButton.interactable = true;
             }
             else
             {
@@ -147,7 +162,7 @@ namespace Com.collective.timclanceys
         {
             if (isConnecting)
             {
-                if (roomField.text != null)
+                if (!string.IsNullOrEmpty(roomField.text))
                 {
                     if (OnlyLetters(roomField.text))
                     {
@@ -183,7 +198,7 @@ namespace Com.collective.timclanceys
         {
             //Debug.Log("new XYZ created");
             //Debug.Log(message);
-            if (roomField.text != null)
+            if (!string.IsNullOrEmpty(roomField.text))
             {
                 if (OnlyLetters(roomField.text))
                 {
@@ -200,6 +215,14 @@ namespace Com.collective.timclanceys
         {
             if (PhotonNetwork.IsConnected)
             {
+                randomButton.interactable = false;
+                connectButton.interactable = false;
+                leaveButton.interactable = true;
+                if(PhotonNetwork.IsMasterClient)
+                {
+                    readyButton.interactable = true;
+                }
+
                 //Debug.Log("entered room");
                 progressLabel.text = "Connected";
                 room.text = "Room: " + PhotonNetwork.CurrentRoom.Name;

@@ -452,7 +452,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
                 //Debug.Log(horizontal + " " + photonView.ViewID);
                 //Debug.Log(vertical + " " + photonView.ViewID);
             }
-            else if (playerList[i].ActorNumber != photonView.ViewID && playerList[i].IsLocal)
+            else if (i+1 != photonView.ViewID && playerList[i].IsLocal)
             {
                 //Debug.Log(playerList[i].ActorNumber + " " + photonView.ViewID);
                 transform.Find("Main Camera").GetComponent<Camera>().gameObject.SetActive(false);

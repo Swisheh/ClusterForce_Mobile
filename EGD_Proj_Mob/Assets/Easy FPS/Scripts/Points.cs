@@ -168,13 +168,13 @@ public class Points : MonoBehaviourPunCallbacks
         camera.transform.position = first.transform.position;  
         GameObject canvas = this.transform.Find("Canvas").gameObject;
         canvas.SetActive(true);
-        canvas.transform.Find("First Place Score").GetComponent<Text>().text = first.name + " " + list[3];
+        canvas.transform.Find("First Place Score").GetComponent<Text>().text = PlayerName(first.name) + " " + list[3];
         canvas.transform.Find("First Place Score").GetComponent<Text>().color = first.GetComponent<MeshRenderer>().material.color;
-        canvas.transform.Find("Second Place Score").GetComponent<Text>().text = second.name + " " + list[2];
+        canvas.transform.Find("Second Place Score").GetComponent<Text>().text = PlayerName(second.name) + " " + list[2];
         canvas.transform.Find("Second Place Score").GetComponent<Text>().color = second.GetComponent<MeshRenderer>().material.color;
-        canvas.transform.Find("Third Place Score").GetComponent<Text>().text = third.name + " " + list[1];
+        canvas.transform.Find("Third Place Score").GetComponent<Text>().text = PlayerName(third.name) + " " + list[1];
         canvas.transform.Find("Third Place Score").GetComponent<Text>().color = third.GetComponent<MeshRenderer>().material.color;
-        canvas.transform.Find("Fourth Place Score").GetComponent<Text>().text = fourth.name + " " + list[0];
+        canvas.transform.Find("Fourth Place Score").GetComponent<Text>().text = PlayerName(fourth.name) + " " + list[0];
         canvas.transform.Find("Fourth Place Score").GetComponent<Text>().color = fourth.GetComponent<MeshRenderer>().material.color;
     }
 
@@ -241,4 +241,64 @@ public class Points : MonoBehaviourPunCallbacks
         p4Script.gameOver = true;
     }
 
+    public string PlayerName(string name)
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+        switch (name)
+        {
+            case "Player 1":                
+                if (players.Length > 0)
+                {
+                    if (!string.IsNullOrEmpty(players[0].NickName))
+                    {
+                        return PhotonNetwork.PlayerList[0].NickName;
+                    }
+                    else
+                    {
+                        return "Player 1";
+                    }
+                }                
+                break;
+            case "Player 2":
+                if (players.Length > 1)
+                {
+                    if (!string.IsNullOrEmpty(players[1].NickName))
+                    {
+                        return PhotonNetwork.PlayerList[1].NickName;
+                    }
+                    else
+                    {
+                        return "Player 2";
+                    }
+                }                
+                break;
+            case "Player 3":
+                if (players.Length > 2)
+                {
+                    if (!string.IsNullOrEmpty(players[2].NickName))
+                    {
+                        return PhotonNetwork.PlayerList[2].NickName;
+                    }
+                    else
+                    {
+                        return "Player 3";
+                    }
+                }                
+                break;
+            case "Player 4":
+                if (players.Length > 3)
+                { 
+                    if (!string.IsNullOrEmpty(players[3].NickName))
+                    {
+                        return PhotonNetwork.PlayerList[3].NickName;
+                    }
+                    else
+                    {
+                        return "Player 4";
+                    }
+                }
+                break;
+        }
+        return "No name found";
+    }
 }
