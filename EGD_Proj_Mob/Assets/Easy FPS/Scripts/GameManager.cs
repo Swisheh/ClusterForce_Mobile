@@ -36,19 +36,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
 
         }
-
-
         PhotonNetwork.LoadLevel("_scene");
     }
 
     public void Ready()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.PlayerList.Length == 4)
         {
             PhotonNetwork.LoadLevel("_scene");
         }
+    }    
+
+    public void Test()
+    {
+        PhotonNetwork.LoadLevel("_scene");
     }
-
-
-    
 }

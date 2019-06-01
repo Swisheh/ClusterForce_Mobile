@@ -234,22 +234,42 @@ namespace Com.collective.timclanceys
                     {
                         case 0:
                             SetName(player1Field, players[i], i + 1);
+                            if (players[i].IsLocal)
+                            {
+                                if(players[i].IsMasterClient)
+                                {
+                                    player1Field.text = "(HOST) " + player1Field.text;
+                                }
+                                player1Field.text = ">>>" + player1Field.text;
+                            }
                             break;
                         case 1:
                             SetName(player2Field, players[i], i + 1);
+                            if (players[i].IsLocal)
+                            {
+                                player2Field.text = ">>>" + player2Field.text;
+                            }
                             break;
                         case 2:
                             SetName(player3Field, players[i], i + 1);
+                            if (players[i].IsLocal)
+                            {
+                                player3Field.text = ">>>" + player3Field.text;
+                            }
                             break;
                         case 3:
                             SetName(player4Field, players[i], i + 1);
+                            if (players[i].IsLocal)
+                            {
+                                player4Field.text = ">>>" + player4Field.text;
+                            }
                             break;
                         default:
                             break;
                     }
 
-                }
-                player1Field.text = "(HOST) " + player1Field.text;
+                    
+                }                
             }
         }
 
@@ -279,10 +299,10 @@ namespace Com.collective.timclanceys
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             //Debug.Log("player left");
-            player1Field.text = "";
-            player2Field.text = "";
-            player3Field.text = "";
-            player4Field.text = "";
+            player1Field.text = "4 players needed to start";
+            player2Field.text = "4 players needed to start";
+            player3Field.text = "4 players needed to start";
+            player4Field.text = "4 players needed to start";
             OnJoinedRoom();
 
             if (PhotonNetwork.IsMasterClient)
