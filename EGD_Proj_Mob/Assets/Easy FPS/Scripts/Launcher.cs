@@ -49,6 +49,7 @@ namespace Com.collective.timclanceys
         [SerializeField]
         private Button readyButton;
 
+        private RoomOptions roomOptions = new RoomOptions();
         private bool isConnecting;
         private bool isRandom;
         #region Private Serializable Fields
@@ -69,7 +70,10 @@ namespace Com.collective.timclanceys
         }
         // Start is called before the first frame update
         void Start()
-        {
+        {            
+            roomOptions.MaxPlayers = maxPlayersPerRoom;
+            roomOptions.PlayerTtl = 0;
+
             progressLabel.gameObject.SetActive(false);
             leaveButton.interactable = false;
             readyButton.interactable = false;
@@ -191,7 +195,7 @@ namespace Com.collective.timclanceys
         {
             //Debug.Log("new room created");
             //Debug.Log(message);
-            PhotonNetwork.CreateRoom(RandomLetters(), new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+            PhotonNetwork.CreateRoom(RandomLetters(), roomOptions);
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
@@ -202,12 +206,12 @@ namespace Com.collective.timclanceys
             {
                 if (OnlyLetters(roomField.text))
                 {
-                    PhotonNetwork.CreateRoom(roomField.text, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+                    PhotonNetwork.CreateRoom(roomField.text, roomOptions);
                 }
             }
             else
             {
-                PhotonNetwork.CreateRoom("XYZ", new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+                PhotonNetwork.CreateRoom("XYZ", roomOptions);
             }
         }
 
@@ -234,12 +238,12 @@ namespace Com.collective.timclanceys
                     {
                         case 0:
                             SetName(player1Field, players[i], i + 1);
+                            if (players[i].IsMasterClient)
+                            {
+                                player1Field.text = "(HOST) " + player1Field.text;
+                            }
                             if (players[i].IsLocal)
                             {
-                                if(players[i].IsMasterClient)
-                                {
-                                    player1Field.text = "(HOST) " + player1Field.text;
-                                }
                                 player1Field.text = ">>>" + player1Field.text;
                             }
                             break;

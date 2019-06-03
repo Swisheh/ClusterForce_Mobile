@@ -301,4 +301,16 @@ public class Points : MonoBehaviourPunCallbacks
         }
         return name;
     }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        //SceneManager.LoadScene(0);
+        PhotonNetwork.LoadLevel(0);
+    }
+
+    private void OnApplicationQuit()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.SendAllOutgoingCommands();
+    }
 }
