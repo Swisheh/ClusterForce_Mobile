@@ -45,7 +45,7 @@ namespace LeoLuz.PlugAndPlayJoystick
         private RectTransform rectTransform;
         private Image imageUI;
         private Vector2 StartPosition;
-        private Vector2 CurrentKnobPosition;
+        public Vector2 CurrentKnobPosition;
         private Vector2 RawAxis;
         [ReadOnlyInPlayMode]
         public Vector2 NormalizedAxis;
@@ -55,7 +55,7 @@ namespace LeoLuz.PlugAndPlayJoystick
         private float CanvasScale;
         private Vector2 ScreenToAnchorPositionConversionConstant;
         private float ScreenUnitsToWorldUnitsConversionConstant;
-        private Vector2 AnalogicStartPosition;
+        public Vector2 AnalogicStartPosition;
         private Touch AnalogTouch;
         private int InsideAreaTouchId = -1;
         private bool Released = false;

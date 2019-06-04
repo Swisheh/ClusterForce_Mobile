@@ -12,6 +12,7 @@ namespace Com.collective.timclanceys
 {
     public class Launcher : MonoBehaviourPunCallbacks
     {
+        #region Private Fields
         [Tooltip("Max Room Players")]
         [SerializeField]
         private byte maxPlayersPerRoom = 4;
@@ -48,6 +49,14 @@ namespace Com.collective.timclanceys
         [Tooltip("Ready Button")]
         [SerializeField]
         private Button readyButton;
+        [Tooltip("Test Button")]
+        [SerializeField]
+        private Button testButton;
+        [Tooltip("Join Sound")]
+        [SerializeField]
+        private AudioSource joinSound;
+
+        #endregion
 
         private RoomOptions roomOptions = new RoomOptions();
         private bool isConnecting;
@@ -70,7 +79,11 @@ namespace Com.collective.timclanceys
         }
         // Start is called before the first frame update
         void Start()
-        {            
+        {
+#if UNITY_EDITOR
+            testButton.gameObject.SetActive(true);
+#endif
+
             roomOptions.MaxPlayers = maxPlayersPerRoom;
             roomOptions.PlayerTtl = 0;
 
@@ -219,6 +232,7 @@ namespace Com.collective.timclanceys
         {
             if (PhotonNetwork.IsConnected)
             {
+                joinSound.Play();
                 randomButton.interactable = false;
                 connectButton.interactable = false;
                 leaveButton.interactable = true;
@@ -293,6 +307,7 @@ namespace Com.collective.timclanceys
         {
             //Debug.Log("player connected");
             OnJoinedRoom();
+            joinSound.Play();
 
             if (PhotonNetwork.IsMasterClient)
             {

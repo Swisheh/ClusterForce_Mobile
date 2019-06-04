@@ -17,7 +17,9 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     public string turning;
 
     public AnalogicKnob left;
+    private Vector2 leftStart;
     public AnalogicKnob right;
+    private Vector2 rightStart;
 
     public PhotonView photonView;
 
@@ -85,6 +87,8 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     // Start is called before the first frame update
     void Awake()
     {
+        leftStart = left.AnalogicStartPosition;
+        rightStart = right.AnalogicStartPosition;
         anim = this.transform.Find("character").GetComponent<Animator>();
         gunBarrel = this.transform.Find("Gatling_Gun/Barrels").GetComponent<Animator>();
         playerRigidbody = GetComponent<Rigidbody>();
@@ -176,11 +180,18 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
                 turningMove = Input.GetAxis(turning);
             //}
 
-            
+            if (left.AnalogicStartPosition != left.CurrentKnobPosition)
+            {
                 Move();
+            }
 
-                // Turn the player to face the mouse cursor.
+            // Turn the player to face the mouse cursor.
+            if (right.AnalogicStartPosition != right.CurrentKnobPosition)
+            {
                 Turning();
+            }
+
+            //Debug.Log(right.AnalogicStartPosition);
 
                 // Shooting
                 Shooting();
@@ -277,25 +288,24 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     void Turning()
-    {
-
-        if (turningMove < -0.25f && turningMove < 0)
+    {        
+        if (turningMove < -0.1f && turningMove < 0 && shoot <= 0.3f)
         {
             float turn = -1f * (Time.deltaTime * turnSpeed);
             Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
             playerRigidbody.MoveRotation(playerRigidbody.rotation * turnRotation);
         }
-        else if (turningMove > 0.25f && turningMove > 0)
+        else if (turningMove > 0.1f && turningMove > 0 && shoot <= 0.3f)
         {
             float turn = 1f * (Time.deltaTime * turnSpeed);
             Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
             playerRigidbody.MoveRotation(playerRigidbody.rotation * turnRotation);
-        }
+        }               
     }
 
     void Shooting()
     {
-        if (shoot >= 0.5f && ammo > 0 && canShoot && health > 0)
+        if (shoot >= 0.7f && ammo > 0 && canShoot && health > 0)
         {
             StartCoroutine(Shoot(currentShootSpeed));
             gunBarrel.SetTrigger("shoot");
@@ -444,6 +454,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
                     cam.rect = new Rect(0f, 0f, 1f, 1f);
                     cam = Camera.main;
                     cam.depth = 1;
+                    cam.GetComponent<AudioListener>().enabled = true;
                     Camera camUI = transform.Find("Main Camera/Camera").GetComponent<Camera>();
                     camUI.rect = new Rect(0f, 0f, 1f, 1f);
                     camUI.depth = 2;
@@ -455,7 +466,9 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
             else if (i+1 != photonView.ViewID && playerList[i].IsLocal)
             {
                 //Debug.Log(playerList[i].ActorNumber + " " + photonView.ViewID);
-                transform.Find("Main Camera").GetComponent<Camera>().gameObject.SetActive(false);
+                Camera enemyCam = transform.Find("Main Camera").GetComponent<Camera>();
+                enemyCam.gameObject.SetActive(false);
+                //enemyCam.GetComponent<AudioListener>().enabled = false;
                 //transform.Find("Main Camera/Camera").GetComponent<Camera>().gameObject.SetActive(false);
             }
         }
