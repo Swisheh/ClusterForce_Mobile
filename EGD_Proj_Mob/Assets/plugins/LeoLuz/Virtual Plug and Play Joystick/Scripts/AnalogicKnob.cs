@@ -58,7 +58,7 @@ namespace LeoLuz.PlugAndPlayJoystick
         public Vector2 AnalogicStartPosition;
         private Touch AnalogTouch;
         private int InsideAreaTouchId = -1;
-        private bool Released = false;
+        public bool Released = false;
         Vector2 lastFrameNormalizedAxis;
         private delegate bool method(Vector2 position);
         private method CheckArea;

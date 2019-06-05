@@ -14,7 +14,9 @@ public class MenuScript : MonoBehaviourPunCallbacks, IPunObservable
     public Text startingCountdown;
     public Text instructions;
     public GameObject players4;
-    //public GameObject mobileJoy;
+    public Button slowStart;
+    public Button fastStart;
+    public Button ready;
 
     private int timer = 5;
     private bool startCountdown = false;
@@ -26,6 +28,13 @@ public class MenuScript : MonoBehaviourPunCallbacks, IPunObservable
         players4.transform.Find("Player 3").GetComponent<Player_Controls>().enabled = false;
         players4.transform.Find("Player 4").GetComponent<Player_Controls>().enabled = false;
         startSound = GameObject.Find("Start").GetComponent<AudioSource>();
+
+        if(!PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            slowStart.gameObject.SetActive(false);
+            fastStart.gameObject.SetActive(false);
+            ready.gameObject.SetActive(true);
+        }
     }
 
     // Update is called once per frame
@@ -87,6 +96,11 @@ public class MenuScript : MonoBehaviourPunCallbacks, IPunObservable
             PhotonView photonView = PhotonView.Get(this);
             photonView.RPC("start4players", RpcTarget.All);
         }
+    }
+
+    public void ReadyUp()
+    {
+
     }
 
     private IEnumerator Timer()

@@ -17,9 +17,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     public string turning;
 
     public AnalogicKnob left;
-    private Vector2 leftStart;
     public AnalogicKnob right;
-    private Vector2 rightStart;
 
     public PhotonView photonView;
 
@@ -87,8 +85,6 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
     // Start is called before the first frame update
     void Awake()
     {
-        leftStart = left.AnalogicStartPosition;
-        rightStart = right.AnalogicStartPosition;
         anim = this.transform.Find("character").GetComponent<Animator>();
         gunBarrel = this.transform.Find("Gatling_Gun/Barrels").GetComponent<Animator>();
         playerRigidbody = GetComponent<Rigidbody>();
@@ -180,13 +176,12 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
                 turningMove = Input.GetAxis(turning);
             //}
 
-            if (left.AnalogicStartPosition != left.CurrentKnobPosition)
-            {
+            
                 Move();
-            }
+            
 
             // Turn the player to face the mouse cursor.
-            if (right.AnalogicStartPosition != right.CurrentKnobPosition)
+            if (!right.Released)
             {
                 Turning();
             }
@@ -231,18 +226,22 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        currentSpeed = playerRigidbody.velocity.magnitude;
-        horizontalMovement = new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z);
-        if (horizontalMovement.magnitude > maxSpeed)
-        {
-            horizontalMovement = horizontalMovement.normalized;
-            horizontalMovement *= maxSpeed;
-        }
-        playerRigidbody.velocity = new Vector3(horizontalMovement.x, playerRigidbody.velocity.y, horizontalMovement.y);
+        
+            currentSpeed = playerRigidbody.velocity.magnitude;
+            horizontalMovement = new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z);
+            if (horizontalMovement.magnitude > maxSpeed)
+            {
+                horizontalMovement = horizontalMovement.normalized;
+                horizontalMovement *= maxSpeed;
+            }
+            playerRigidbody.velocity = new Vector3(horizontalMovement.x, playerRigidbody.velocity.y, horizontalMovement.y);
 
-        playerRigidbody.velocity = Vector3.SmoothDamp(playerRigidbody.velocity, new Vector3(0, playerRigidbody.velocity.y, 0), ref slowdownV, deaccelerationSpeed);
-        playerRigidbody.AddRelativeForce(horizontalMove * accelerationSpeed * Time.deltaTime, 0, verticalMove * accelerationSpeed * Time.deltaTime);
-        //Debug.Log(state.ThumbSticks.Left.X);
+            playerRigidbody.velocity = Vector3.SmoothDamp(playerRigidbody.velocity, new Vector3(0, playerRigidbody.velocity.y, 0), ref slowdownV, deaccelerationSpeed);
+        if (!left.Released)
+        {
+            playerRigidbody.AddRelativeForce(horizontalMove * accelerationSpeed * Time.deltaTime, 0, verticalMove * accelerationSpeed * Time.deltaTime);
+            //Debug.Log(state.ThumbSticks.Left.X);
+        }
 
         if (horizontalMove != 0 || verticalMove != 0)
         {
@@ -269,7 +268,7 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
             //anim.SetTrigger("left");
             leftA = true;
         }
-        else if (playerRigidbody.velocity == new Vector3(0, 0, 0))
+        else if (left.Released)
         {
             //if (photonView.IsMine)
             //{
@@ -313,8 +312,11 @@ public class Player_Controls : MonoBehaviourPunCallbacks, IPunObservable
             gunBarrel.speed = currentShootSpeed + 1;
             currentShootSpeed += maxShootSpeed;
             ammo = ammo - 1;
-            shootingSound.Play();
-
+            if (PhotonNetwork.LocalPlayer.IsLocal)
+            {
+                shootingSound.Play();
+                Debug.Log("mine");
+            }
             Bullets();
         }
         else if (shoot == 0)
